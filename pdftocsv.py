@@ -5,7 +5,7 @@ import re
 def extract_invoice_data(pdf_path):
     extracted_data = []
     
-    with pdfplumber.open(pdf_path) as pdf:
+    with pdfplumber.open(C:\Users\Admin\Desktop\Invoicesth) as pdf:
         for page in pdf.pages:
             text = page.extract_text()
             if text:
@@ -33,6 +33,6 @@ def save_to_csv(data, output_csv):
 if __name__ == "__main__":
     pdf_path = "input_invoice.pdf"  # Update with your PDF file path
     output_csv = "output.csv"
-    data = extract_invoice_data(pdf_path)
+    data = extract_invoice_data(C:\Users\Admin\Desktop\Invoicesath)
     save_to_csv(data, output_csv)
     print(f"Extracted data saved to {output_csv}")
