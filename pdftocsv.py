@@ -5,7 +5,7 @@ import re
 def extract_invoice_data(pdf_path):
     extracted_data = []
     
-    pdf_path = r"C:\Users\Admin\Desktop\Invoices"
+    pdf_path = r"D:\Code\Invoices"
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages:
             text = page.extract_text()
