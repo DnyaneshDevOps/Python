@@ -47,4 +47,4 @@ with open(output_csv, mode="w", newline="") as file:
     writer.writeheader()
     writer.writerows(data_list)
 
-print(f"Data successfully extracted and saved to {output_csv}")''
+print(f"Data successfully extracted and saved to {output_csv}")
