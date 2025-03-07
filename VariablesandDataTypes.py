@@ -1,5 +1,5 @@
 name = "Alice"
-age = 30
+age = 25
 height = 5.6  # in feet
 is_student = True
 
