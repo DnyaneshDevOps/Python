@@ -24,7 +24,7 @@ def extract_po_number_from_pdf(pdf_path):
             tables = page.extract_tables()  # Extract all tables
             
             for table in tables:
-                po_number_parts = []  # Store all parts of PO Number
+                po_number_parts = []  # Store all PO Number fragments
 
                 for row in table:
                     row_text = " ".join([cell.strip() for cell in row if cell])  # Combine row text
@@ -34,17 +34,17 @@ def extract_po_number_from_pdf(pdf_path):
 
                     # If "PO Number" exists anywhere in the row, extract the value
                     if "PO Number" in row_text:
-                        match = re.search(r"PO Number\s*[:\-]?\s*(.+)", row_text, re.IGNORECASE)
+                        match = re.search(r"PO Number[:\s\-]*(.+)", row_text, re.IGNORECASE)
                         if match:
                             extracted_value = match.group(1).strip()
                             po_number_parts.append(extracted_value)
                             print(f"✅ Found PO Number Part: {extracted_value}")
 
-                # If we found multiple parts, join them to form the complete PO Number
+                # If multiple parts of the PO Number were found, combine them
                 if po_number_parts:
                     full_po_number = " ".join(po_number_parts).strip()
                     print(f"✅ Full PO Number Extracted: {full_po_number}")
-                    return full_po_number  # Return the complete PO Number
+                    return full_po_number  
                         
     return "NOT FOUND"
 
