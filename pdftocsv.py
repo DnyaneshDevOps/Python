@@ -44,7 +44,7 @@ def extract_invoice_details(text):
     bill_to = bill_to_match.group(1).strip() if bill_to_match else ""
 
     # Extract PO Number (from Software Development services)
-    po_number_match = re.search(r"Software Development services:\s*([\w\-/\.]+)", text)
+    po_number_match = re.search(r"Software Development services:\s*\n?([A-Za-z0-9\-/\.]+)", text)   ##re.search(r"Software Development services:\s*([\w\-/\.]+)", text)
     po_number = po_number_match.group(1).strip() if po_number_match else ""
 
     # Extract total amount due
