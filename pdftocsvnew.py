@@ -3,16 +3,13 @@ import re
 import csv
 from docx import Document
 
-# Directory containing Word documents (Update this if needed)
+# Directory containing Word documents
 docx_folder = r"D:\Code\Invoices"
 output_csv = r"D:\Code\InvoicesCSV\invoices_data.csv"
 
 def extract_text_from_docx(docx_path):
     """
     Extracts text from a Word (.docx) document.
-
-    Parameters:
-        docx_path (str): Path to the .docx file.
 
     Returns:
         tuple: Extracted text and the Document object.
@@ -30,12 +27,8 @@ def extract_invoice_details(text, doc):
     """
     Extracts invoice details using regex and retrieves PO Number from tables.
 
-    Parameters:
-        text (str): Extracted text from the Word document.
-        doc (Document): The Word document object.
-
     Returns:
-        dict: Dictionary containing extracted invoice details.
+        dict: Extracted invoice details.
     """
     invoice_number_match = re.search(r"Invoice Number:\s*(.+)", text)
     due_date_match = re.search(r"Due Date:\s*(\d{2}/\d{2}/\d{4})", text)
@@ -48,11 +41,12 @@ def extract_invoice_details(text, doc):
     po_number = "NOT FOUND"
     for table in doc.tables:
         for row in table.rows:
-            row_text = row.cells[0].text.strip()
-            print(f"Checking table row: {row_text}")  # Debugging line
-            if ":" in row_text:
-                po_number = row_text.split(":", 1)[1].strip()
-                break  # Stop after finding the first match
+            row_data = [cell.text.strip() for cell in row.cells]
+            print(f"Table Row Data: {row_data}")  # Debugging line
+            for cell_text in row_data:
+                if "PO Number" in cell_text:
+                    po_number = cell_text.split(":", 1)[-1].strip()
+                    break
 
     # Extract Total Amount Due
     total_amount_match = re.search(r"Total Amount Due\s*\$([\d,]+\.\d{2})", text)
@@ -69,17 +63,17 @@ def extract_invoice_details(text, doc):
     print(f"Extracted Data: {extracted_data}")  # Debugging line
     return extracted_data
 
-# Process all .docx files and store data
+# Process all .docx files
 data_list = []
 for filename in os.listdir(docx_folder):
     if filename.endswith(".docx"):
         docx_path = os.path.join(docx_folder, filename)
         try:
-            print(f"\nProcessing: {filename}")  # Debugging line
+            print(f"\nProcessing: {filename}")  
             text, doc = extract_text_from_docx(docx_path)
             print(f"\nExtracted Text:\n{text}\n")  # Debugging line
             extracted_data = extract_invoice_details(text, doc)
-            if any(value != "NOT FOUND" for value in extracted_data.values()):  # Ensure there's valid data
+            if any(value != "NOT FOUND" for value in extracted_data.values()):
                 data_list.append(extracted_data)
             else:
                 print(f"⚠️ No valid data found in {filename}")
