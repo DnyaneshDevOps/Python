@@ -18,22 +18,25 @@ def extract_text_from_pdf(pdf_path):
     return text
 
 def extract_po_number_from_pdf(pdf_path):
-    """Extracts PO Number from a table in the PDF."""
+    """Extracts PO Number from a table in the PDF (handles multi-line values)."""
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages:
             tables = page.extract_tables()  # Extract all tables
             
             for table in tables:
                 for row in table:
-                    for cell in row:
-                        if cell and ":" in cell:
-                            key_value = cell.split(":")
-                            key = key_value[0].strip().lower()
-                            value = key_value[1].strip() if len(key_value) > 1 else ""
-
-                            if "po number" in key:
-                                return value  # Return the first matched PO Number
-
+                    row_text = " ".join([cell.strip() for cell in row if cell])  # Combine row text
+                    
+                    # Debugging Step: Print each row
+                    print(f"🔍 Checking Table Row: {row_text}")
+                    
+                    if "PO Number" in row_text:
+                        match = re.search(r"PO Number\s*[:\-]?\s*(.+)", row_text, re.IGNORECASE)
+                        if match:
+                            po_number = match.group(1).strip()
+                            print(f"✅ Found PO Number: {po_number}")
+                            return po_number  # Return full PO Number
+                        
     return "NOT FOUND"
 
 def extract_invoice_details(text, pdf_path):
