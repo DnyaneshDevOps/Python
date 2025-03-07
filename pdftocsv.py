@@ -22,6 +22,7 @@ def extract_invoice_details(text):
     due_date = re.search(r"Due Date:\s*(\d{2}/\d{2}/\d{4})", text)
     bill_to = re.search(r"Bill To:\s*\n(\S.+)", text)       ##re.search(r"Bill To:\s*(.*?)\n\n", text, re.DOTALL)
     service = re.search(r"Software Development services:\s*([\w\-/]+)", text)     ##re.search(r"Software Development services:\s*([\w\-/]+)", text)
+    service = "Software Development services" if service else ""
     total_amount = re.search(r"Total Amount Due\s*\$([\d,]+\.\d{2})", text)
 
     return {
@@ -29,7 +30,7 @@ def extract_invoice_details(text):
         "Due Date": due_date.group(1) if due_date else "",
         "Bill To": bill_to.group(1).replace("\n", ", ") if bill_to else "",
         "PO Number": service.group(1) if service else "",
-        "Total Amount Due": total_amount.group(1) if total_amount else "",
+        "Total Amount Due": total_amount.group(1) if total_amount else ""
     }
 
 # Process all PDFs and store data
