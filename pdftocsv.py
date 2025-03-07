@@ -43,7 +43,7 @@ for filename in os.listdir(pdf_folder):
 
 # Write to CSV file
 with open(output_csv, mode="w", newline="") as file:
-    writer = csv.DictWriter(file, fieldnames=["Invoice Number", "Due Date", "Bill To", "PO Number", "Total Amount Due"])
+    writer = csv.DictWriter(file, fieldnames=["Invoice Number", "Due Date", "Bill To", "Software Development Services", "Total Amount Due"])
     writer.writeheader()
     writer.writerows(data_list)
 
