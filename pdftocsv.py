@@ -4,7 +4,7 @@ import csv
 import PyPDF2
 
 # Directory containing PDFs (Update this if needed)
-pdf_folder = "D:\Code\Invoicesder"
+pdf_folder = "D:\Code\Invoices"
 output_csv = "invoices_data.csv"
 
 # Function to extract text from a PDF
