@@ -13,7 +13,7 @@ def extract_invoice_data(pdf_path):
                 invoice_number = re.search(r'Invoice Number[:\s]+(\S+)', text)
                 invoice_date = re.search(r'Due Date[:\s]+(\S+)', text)
                 billed_to = re.search(r'Bill To[:\s]+([\w\s]+)', text)
-                po_number = re.search(r'Description[:\s]+(\S+)', text)
+                po_number = re.search(r'Software Development services[:\s]+(\S+)', text)
                 value = re.search(r'Total[:\s]+([\d,.]+)', text)
                 
                 data = {
