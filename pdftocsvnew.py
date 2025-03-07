@@ -17,9 +17,23 @@ def extract_text_from_pdf(pdf_path):
                 text += page_text + "\n"
     return text
 
-def extract_invoice_details(text):
-    """Extracts invoice details using regex from extracted text."""
-    
+def extract_po_number_from_pdf(pdf_path):
+    """Extracts PO Number from a table in the PDF."""
+    with pdfplumber.open(pdf_path) as pdf:
+        for page in pdf.pages:
+            table = page.extract_table()  # Extracts first table on the page
+
+            if table:
+                for row in table:
+                    for cell in row:
+                        if cell and "PO Number" in cell:
+                            return cell.split(":")[-1].strip()
+
+    return "NOT FOUND"
+
+def extract_invoice_details(text, pdf_path):
+    """Extracts invoice details using regex and retrieves PO Number from tables."""
+
     # Debugging Step: Print extracted text
     print(f"\n📝 Extracted Text:\n{text}")
 
@@ -27,9 +41,8 @@ def extract_invoice_details(text):
     due_date_match = re.search(r"Due Date:\s*(\d{2}/\d{2}/\d{4})", text, re.IGNORECASE)
     bill_to_match = re.search(r"Bill To:\s*(.+)", text, re.IGNORECASE)
 
-    # Extract PO Number (assumes "Software Development services" is a key phrase)
-    po_number_match = re.search(r"Software Development services.*?([\w\-/\.]+)", text, re.IGNORECASE)
-    po_number = po_number_match.group(1).strip() if po_number_match else "NOT FOUND"
+    # Extract PO Number from the table instead of text
+    po_number = extract_po_number_from_pdf(pdf_path)
 
     # Extract Total Amount Due
     total_amount_match = re.search(r"Total Amount Due\s*\$([\d,]+\.\d{2})", text, re.IGNORECASE)
@@ -56,7 +69,7 @@ for filename in os.listdir(pdf_folder):
         try:
             print(f"\nProcessing: {filename}")
             text = extract_text_from_pdf(pdf_path)
-            extracted_data = extract_invoice_details(text)
+            extracted_data = extract_invoice_details(text, pdf_path)
             
             if any(value != "NOT FOUND" for value in extracted_data.values()):
                 data_list.append(extracted_data)
