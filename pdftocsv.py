@@ -5,7 +5,9 @@ import pdfplumber
 
 # Directory containing PDFs (Update this if needed)
 pdf_folder = r"D:\Code\Invoices"
-output_csv = "invoices_data.csv"
+
+# ✅ Set the specific path where the CSV file should be saved
+output_csv = r"D:\Code\InvoicesCSV\invoices_data.csv"
 
 def extract_text_from_pdf(pdf_path):
     """
@@ -54,7 +56,7 @@ def extract_invoice_details(text):
         "Invoice Number": invoice_number_match.group(1).strip() if invoice_number_match else "",
         "Due Date": due_date_match.group(1).strip() if due_date_match else "",
         "Bill To": bill_to,
-        "PO Number": po_number,  # ✅ Now extracts the correct PO Number
+        "PO Number": po_number,
         "Total Amount Due": total_amount
     }
 
@@ -70,6 +72,9 @@ for filename in os.listdir(pdf_folder):
 
         extracted_data = extract_invoice_details(text)
         data_list.append(extracted_data)
+
+# ✅ Ensure the output directory exists before saving the file
+os.makedirs(os.path.dirname(output_csv), exist_ok=True)
 
 # Write to CSV file
 with open(output_csv, mode="w", newline="") as file:
