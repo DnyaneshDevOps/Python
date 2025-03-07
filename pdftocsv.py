@@ -28,7 +28,7 @@ def extract_invoice_details(text):
         "Invoice Number": invoice_number.group(1) if invoice_number else "",
         "Due Date": due_date.group(1) if due_date else "",
         "Bill To": bill_to.group(1).replace("\n", ", ") if bill_to else "",
-        "PO Number": service.group(1) if service else "",
+        "Software Development services": service.group(1) if service else "",
         "Total Amount Due": total_amount.group(1) if total_amount else ""
     }
     
