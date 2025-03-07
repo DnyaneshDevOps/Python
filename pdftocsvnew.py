@@ -18,11 +18,11 @@ def extract_text_from_pdf(pdf_path):
     return text
 
 def extract_po_number_from_pdf(pdf_path):
-    """Extracts full PO Number from a table in the PDF (handles multi-line and split data)."""
+    """Extracts full PO Number from tables in the PDF (handles multi-line and split data)."""
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages:
-            tables = page.extract_tables()  # Extract all tables
-            
+            tables = page.extract_tables()
+
             for table in tables:
                 po_number_parts = []  # Store all PO Number fragments
 
@@ -32,7 +32,7 @@ def extract_po_number_from_pdf(pdf_path):
                     # Debugging Step: Print each row
                     print(f"🔍 Checking Table Row: {row_text}")
 
-                    # If "PO Number" exists anywhere in the row, extract the value
+                    # Check if "PO Number" is in the row
                     if "PO Number" in row_text:
                         match = re.search(r"PO Number[:\s\-]*(.+)", row_text, re.IGNORECASE)
                         if match:
@@ -40,28 +40,32 @@ def extract_po_number_from_pdf(pdf_path):
                             po_number_parts.append(extracted_value)
                             print(f"✅ Found PO Number Part: {extracted_value}")
 
-                # If multiple parts of the PO Number were found, combine them
+                    # Check if this row is a continuation of a previously found PO Number
+                    elif po_number_parts and re.search(r"[\w\-/]+", row_text):
+                        po_number_parts.append(row_text.strip())
+                        print(f"➕ Added extra part: {row_text.strip()}")
+
+                # Combine all parts of the PO Number
                 if po_number_parts:
                     full_po_number = " ".join(po_number_parts).strip()
                     print(f"✅ Full PO Number Extracted: {full_po_number}")
                     return full_po_number  
-                        
+
     return "NOT FOUND"
 
 def extract_invoice_details(text, pdf_path):
     """Extracts invoice details using regex and retrieves PO Number from tables."""
 
-    # Debugging Step: Print extracted text
-    print(f"\n📝 Extracted Text:\n{text}")
+    print(f"\n📝 Extracted Text:\n{text}")  # Debugging
 
     invoice_number_match = re.search(r"Invoice Number:\s*(.+)", text, re.IGNORECASE)
     due_date_match = re.search(r"Due Date:\s*(\d{2}/\d{2}/\d{4})", text, re.IGNORECASE)
     bill_to_match = re.search(r"Bill To:\s*(.+)", text, re.IGNORECASE)
 
-    # Extract PO Number from the table inside the PDF
+    # Get PO Number from table
     po_number = extract_po_number_from_pdf(pdf_path)
 
-    # If PO Number wasn't found in the table, try extracting from text
+    # If PO Number not found in table, check in extracted text
     if po_number == "NOT FOUND":
         po_number_match = re.search(r"Software Development services.*?([\w\-/\.]+)", text, re.IGNORECASE)
         po_number = po_number_match.group(1).strip() if po_number_match else "NOT FOUND"
@@ -78,7 +82,7 @@ def extract_invoice_details(text, pdf_path):
         "Total Amount Due": total_amount
     }
 
-    print(f"📊 Extracted Data: {extracted_data}")  # Debugging Step
+    print(f"📊 Extracted Data: {extracted_data}")  # Debugging
     return extracted_data
 
 # Process all PDFs
