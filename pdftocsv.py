@@ -14,7 +14,7 @@ def extract_invoice_data(pdf_path):
                 invoice_date = re.search(r'Due Date[:\s]+(\S+)', text)
                 billed_to = re.search(r'Bill To[:\s]+([\w\s]+)', text)
                 po_number = re.search(r'Software Development services[:\s]+(\S+)', text)
-                value = re.search(r'Total Amount Due[:\s]+([\d,.]+)', text)
+                value = re.search(r'Total Amount Due:\s*\$?([\d,]+\.?\d*)', text) ##re.search(r'Total Amount Due[:\s]+([\d,.]+)', text)
                 
                 data = {
                     "Invoice Number": invoice_number.group(1) if invoice_number else "N/A",
