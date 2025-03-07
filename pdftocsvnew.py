@@ -18,24 +18,33 @@ def extract_text_from_pdf(pdf_path):
     return text
 
 def extract_po_number_from_pdf(pdf_path):
-    """Extracts PO Number from a table in the PDF (handles multi-line values)."""
+    """Extracts full PO Number from a table in the PDF (handles multi-line and split data)."""
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages:
             tables = page.extract_tables()  # Extract all tables
             
             for table in tables:
+                po_number_parts = []  # Store all parts of PO Number
+
                 for row in table:
                     row_text = " ".join([cell.strip() for cell in row if cell])  # Combine row text
                     
                     # Debugging Step: Print each row
                     print(f"🔍 Checking Table Row: {row_text}")
-                    
+
+                    # If "PO Number" exists anywhere in the row, extract the value
                     if "PO Number" in row_text:
                         match = re.search(r"PO Number\s*[:\-]?\s*(.+)", row_text, re.IGNORECASE)
                         if match:
-                            po_number = match.group(1).strip()
-                            print(f"✅ Found PO Number: {po_number}")
-                            return po_number  # Return full PO Number
+                            extracted_value = match.group(1).strip()
+                            po_number_parts.append(extracted_value)
+                            print(f"✅ Found PO Number Part: {extracted_value}")
+
+                # If we found multiple parts, join them to form the complete PO Number
+                if po_number_parts:
+                    full_po_number = " ".join(po_number_parts).strip()
+                    print(f"✅ Full PO Number Extracted: {full_po_number}")
+                    return full_po_number  # Return the complete PO Number
                         
     return "NOT FOUND"
 
