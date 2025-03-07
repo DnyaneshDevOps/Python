@@ -20,8 +20,8 @@ def extract_text_from_pdf(pdf_path):
 def extract_invoice_details(text):
     invoice_number = re.search(r"Invoice Number:\s*(.+)", text)
     due_date = re.search(r"Due Date:\s*(\d{2}/\d{2}/\d{4})", text)
-    bill_to = re.search(r"Bill To:\s*\n(\S.+)", text)       ##re.search(r"Bill To:\s*(.*?)\n\n", text, re.DOTALL)
-    service = re.search(r"Software Development services:\s*([A-Za-z0-9\-/\.]+)", text)     ##re.search(r"Software Development services:\s*([\w\-/]+)", text)
+    bill_to = re.search(r"Bill To:\s*\n(\S.+)", text)       
+    service = re.search(r"(Software Development services:\s*[A-Za-z0-9\-/\.]+)", text)     
     total_amount = re.search(r"Total Amount Due\s*\$([\d,]+\.\d{2})", text)
 
     return {
@@ -31,7 +31,7 @@ def extract_invoice_details(text):
         "PO Number": service.group(1) if service else "",
         "Total Amount Due": total_amount.group(1) if total_amount else ""
     }
-
+    
 # Process all PDFs and store data
 data_list = []
 for filename in os.listdir(pdf_folder):
