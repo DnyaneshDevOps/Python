@@ -21,8 +21,7 @@ def extract_invoice_details(text):
     invoice_number = re.search(r"Invoice Number:\s*(.+)", text)
     due_date = re.search(r"Due Date:\s*(\d{2}/\d{2}/\d{4})", text)
     bill_to = re.search(r"Bill To:\s*\n(\S.+)", text)       ##re.search(r"Bill To:\s*(.*?)\n\n", text, re.DOTALL)
-    service = re.search(r"Software Development services:\s*([\w\-/]+)", text)     ##re.search(r"Software Development services:\s*([\w\-/]+)", text)
-    service = "Software Development services" if service else ""
+    service = re.search(r"Software Development services:\s*([\w\-/\.]+)", text)     ##re.search(r"Software Development services:\s*([\w\-/]+)", text)
     total_amount = re.search(r"Total Amount Due\s*\$([\d,]+\.\d{2})", text)
 
     return {
